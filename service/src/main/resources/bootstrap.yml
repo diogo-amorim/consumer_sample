@@ -1,7 +1,0 @@
-spring:
-  application:
-    name: integration
-  cloud:
-    config:
-      uri: ${CONFIG_SERVER_URL:https://gcd-config-server-dev.maersk-digital.net/configserver}
-
