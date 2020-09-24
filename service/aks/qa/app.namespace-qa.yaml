@@ -1,0 +1,9 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: gcd-qa
+  labels:
+    product: gcd
+    vault: enabled
+

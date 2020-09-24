@@ -1,0 +1,12 @@
+{
+  "connect.name": "emp.maersk.com.KeySchema",
+  "fields": [
+    {
+      "name": "messageKey",
+      "type": "string"
+    }
+  ],
+  "name": "KeySchema",
+  "namespace": "net.apmoller.crb.gcd.microservices.eventstream.integration.events.payload",
+  "type": "record"
+}

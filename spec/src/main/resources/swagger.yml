@@ -1,0 +1,125 @@
+swagger: "2.0"
+info:
+  description: "Integration Service API"
+  version: "1.0.0"
+  title: "Integration Service"
+host: "api.apmoller.net"
+basePath: "/v1"
+tags:
+  - name: "integration"
+    description: "integration service is spring cloud stream microservice that produces/consumes events from Kafka"
+    externalDocs:
+      description: "Find out more"
+      url: "http://swagger.io"
+schemes:
+  - "https"
+  - "http"
+paths:
+  /port-call:
+    post:
+      tags:
+        - "integration"
+      summary: "Create port call object for each port in the vessel voyage schedule"
+      description: ""
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "body"
+          name: "body"
+          description: "Port call object that need to be added to the store"
+          required: true
+          schema:
+            $ref: "#/definitions/PortCall"
+      responses:
+        400:
+          description: "bad request"
+        201:
+          description: "created" 
+definitions:
+  PortCall:
+    type: "object"
+    properties:
+      id:
+        type: string
+      vesselCode:
+        type: string
+      vesselOperatorCode:
+        type: string
+      vesselName:
+        type: string
+      vesselIMOCode:
+        type: string
+      vesselFlagCode:
+        type: string
+      vesselFlagCountryName:
+        type: string
+      siteRkstCode:
+        type: string
+      siteName:
+        type: string
+      siteGeoCode:
+        type: string
+      cityCode:
+        type: string
+      cityGeoCode:
+        type: string
+      city:
+        type: string
+      country:
+        type: string
+      previousSiteCode:
+        type: string
+      nextSiteCode:
+        type: string
+      arrivalVoyageCode:
+        type: string
+      departureVoyageCode:
+        type: string
+      arrivalServiceCode:
+        type: string
+      departureServiceCode:
+        type: string
+      arrivalDirection:
+        type: string
+      departureDirection:
+        type: string
+      gsisKey:
+        type: integer
+      siteOrder:
+        type: integer
+      isOmitted:
+        type: string
+      actualArrivalDate:
+        type: string
+        format: date-time
+      actualDepartureDate:
+        type: string
+        format: date-time
+      estimatedArrivalDate:
+        type: string
+        format: date-time
+      estimatedDepartureDate:
+        type: string
+        format: date-time
+      performaArrivalDate:
+        type: string
+        format: date-time
+      performaDepartureDate:
+        type: string
+        format: date-time
+      compliance:
+        type: array
+        items:
+          $ref: '#/definitions/Compliance'
+  Compliance:
+    type: "object"
+    properties:
+      compliances:
+        type: array
+        items:
+            type: string
+externalDocs:
+  description: "Find out more about Swagger"
+  url: "http://swagger.io"

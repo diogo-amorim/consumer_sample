@@ -1,0 +1,441 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>net.apmoller.crb.gcd.microservices.eventstream.integration</groupId>
+		<artifactId>integration</artifactId>
+		<version>1.0.0</version>
+	</parent>
+	<artifactId>integration-service</artifactId>
+	<name>integration-service</name>
+	<version>1.0.0</version>
+	<description>Spring Cloud Stream Kafka microservice-producer-consumer</description>
+	<properties>
+		<docker-registry-namespace>online/microservice</docker-registry-namespace>
+		<spring-boot-reactive-components.version>1.0.0-20190819.145429-44</spring-boot-reactive-components.version>
+		<sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
+		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
+		<sonar.surefire.reportsPath>${project.build.directory}/surefire-reports</sonar.surefire.reportsPath>
+		<sonar.junit.reportPaths>${project.build.directory}/jacoco.exec</sonar.junit.reportPaths>
+		<sonar.binaries>${project.build.directory}/classes</sonar.binaries>
+		<sonar.language>java</sonar.language>
+		<sonar.host.url>http://localhost:32768/</sonar.host.url>
+		<sonar.sources>src/main</sonar.sources>
+		<sonar.tests>src/test</sonar.tests>
+		<spring-boot.version>2.2.0.RELEASE</spring-boot.version>
+		<stream-kafka.version>3.0.0.RELEASE</stream-kafka.version>
+		<azure.version>2.2.0</azure.version>
+		<spring-cloud.version>Greenwich.SR1</spring-cloud.version>
+		<unit-tests.skip>false</unit-tests.skip>
+		<avro.version>1.9.2</avro.version>
+		<spring-boot-admin.version>2.2.0</spring-boot-admin.version>
+	</properties>
+
+    <dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-dependencies</artifactId>
+				<version>${spring-cloud.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>		
+			
+		    <dependency>
+				<groupId>com.microsoft.azure</groupId>
+				<artifactId>azure-spring-boot-bom</artifactId>
+				<version>${azure.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-dependencies</artifactId>
+				<version>Hoxton.RELEASE</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+	
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-webflux</artifactId>
+		</dependency>
+
+	<dependency>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-web</artifactId>
+	</dependency>
+		
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-sleuth</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-configuration-processor</artifactId>
+			<optional>true</optional>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-stream</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-stream-binder-kafka</artifactId>
+		</dependency>
+
+
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-stream-schema</artifactId>
+			<version>2.2.1.RELEASE</version>
+		</dependency>
+		<dependency>
+			<groupId>io.confluent</groupId>
+			<artifactId>kafka-avro-serializer</artifactId>
+			<version>5.3.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.avro</groupId>
+			<artifactId>avro</artifactId>
+			<version>${avro.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.avro</groupId>
+			<artifactId>avro-maven-plugin</artifactId>
+			<version>${avro.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.avro</groupId>
+			<artifactId>avro-compiler</artifactId>
+			<version>${avro.version}</version>
+		</dependency>
+
+
+		<dependency>
+			<groupId>org.springframework.ws</groupId>
+			<artifactId>spring-ws-security</artifactId>
+			<version>3.0.8.RELEASE</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.ws.security</groupId>
+			<artifactId>wss4j</artifactId>
+			<version>1.6.19</version>
+		</dependency>
+		<dependency>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
+			<version>2.8.6</version>
+		</dependency>
+
+		<dependency>
+			<groupId>joda-time</groupId>
+			<artifactId>joda-time</artifactId>
+			<version>2.10.2</version>
+		</dependency>
+
+        <dependency>
+			<groupId>com.microsoft.azure</groupId>
+			<artifactId>azure-storage-spring-boot-starter</artifactId>
+		</dependency>
+       
+	   <!-- https://mvnrepository.com/artifact/com.azure/azure-storage-blob -->
+		<dependency>
+			<groupId>com.azure</groupId>
+			<artifactId>azure-storage-blob</artifactId>
+			<version>12.0.0</version>
+		</dependency>
+
+		<!-- <dependency> <groupId>org.springframework.cloud</groupId> <artifactId>spring-cloud-starter-config</artifactId> 
+			<version>${spring-boot.version}</version> </dependency> <dependency> <groupId>org.springframework.cloud</groupId> 
+			<artifactId>spring-cloud-starter-stream-kafka</artifactId> <version>${stream-kafka.version}</version> 
+			</dependency> <dependency> <groupId>org.springframework.cloud</groupId> <artifactId>spring-cloud-bus</artifactId> 
+			<version>${spring-boot.version}</version> </dependency> <dependency> <groupId>org.springframework.cloud</groupId> 
+			<artifactId>spring-cloud-starter-bus-kafka</artifactId> <version>${spring-boot.version}</version> 
+			</dependency> -->
+		<!-- https://mvnrepository.com/artifact/org.springframework/spring-context -->
+		<dependency>
+			<groupId>com.maersk.gcd</groupId>
+			<artifactId>common-components</artifactId>
+			<version>1.0.35</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.fasterxml.jackson.datatype</groupId>
+			<artifactId>jackson-datatype-jsr310</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>com.fasterxml.jackson.datatype</groupId>
+			<artifactId>jackson-datatype-joda</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-starter-logging</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-log4j2</artifactId>
+		</dependency>	    
+		<dependency>
+			<groupId>io.micrometer</groupId>
+			<artifactId>micrometer-registry-prometheus</artifactId>
+		</dependency>
+		<dependency>
+            <groupId>de.codecentric</groupId>
+            <artifactId>spring-boot-admin-starter-client</artifactId>
+            <version>${spring-boot-admin.version}</version>
+        </dependency>		
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-engine</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.projectreactor</groupId>
+			<artifactId>reactor-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.powermock</groupId>
+			<artifactId>powermock-module-junit4</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.powermock</groupId>
+			<artifactId>powermock-api-mockito2</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<!-- When trying to generate JaCoCo report we get a conflict with classes 
+			that use PowerMock in corresponding test class. As PowerMock instruments 
+			the target class under test we end up with multiple versions of the compiled 
+			class which confuses JaCoCo. It is therefore unable to establish test coverage 
+			for the target class and it will be reported as having 0% coverage. To overcome 
+			the problem we use 'offline' instrumentation. However, in order to do this 
+			the jacocoagent.jar MUST be on the classpath and hence the following dependency 
+			is required with the 'runtime' classifier. -->
+		<dependency>
+			<groupId>org.jacoco</groupId>
+			<artifactId>org.jacoco.agent</artifactId>
+			<classifier>runtime</classifier>
+			<version>0.8.4</version>
+			<scope>test</scope>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.junit.platform/junit-platform-launcher -->
+		<dependency>
+			<groupId>org.junit.platform</groupId>
+			<artifactId>junit-platform-launcher</artifactId>
+			<version>1.5.2</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>
+				spring-boot-starter-data-mongodb-reactive
+			</artifactId>
+			<version>2.0.3.RELEASE</version>
+		</dependency>
+
+
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-config</artifactId>
+			<version>${spring-boot.version}</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-stream-kafka</artifactId>
+			<version>${stream-kafka.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-bus</artifactId>
+			<version>${spring-boot.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-bus-kafka</artifactId>
+			<version>${spring-boot.version}</version>
+		</dependency>
+	</dependencies>
+	<repositories>
+		<repository>
+			<id>confluent</id>
+			<url>https://packages.confluent.io/maven/</url>
+		</repository>
+	</repositories>
+	<build>
+	
+	 <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-archetype-plugin</artifactId>
+          <version>3.1.2</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+	
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.avro</groupId>
+				<artifactId>avro-maven-plugin</artifactId>
+				<version>1.9.2</version>
+				<executions>
+					<execution>
+						<id>schemas</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>schema</goal>
+							<goal>protocol</goal>
+							<goal>idl-protocol</goal>
+						</goals>
+						<configuration>
+							<sourceDirectory>${project.basedir}/src/main/resources/</sourceDirectory>
+							<outputDirectory>${project.basedir}/src/main/java/</outputDirectory>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>com.microsoft.azure</groupId>
+				<artifactId>azure-webapp-maven-plugin</artifactId>
+				<version>1.8.0</version>
+				<configuration>
+					<schemaVersion>V2</schemaVersion>
+					<resourceGroup>rgpazewsmlit-gcd-na-001</resourceGroup>
+					<appName>gcd-integration-service</appName>
+					<pricingTier>P1v2</pricingTier>
+					<region>westeurope</region>
+					<runtime>
+						<os>linux</os>
+						<javaVersion>jre8</javaVersion>
+						<webContainer>jre8</webContainer>
+					</runtime>
+					<deployment>
+						<resources>
+							<resource>
+								<directory>${project.basedir}/target</directory>
+								<includes>
+									<include>*.jar</include>
+								</includes>
+							</resource>
+						</resources>
+					</deployment>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>pl.project13.maven</groupId>
+				<artifactId>git-commit-id-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>0.8.4</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>report</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>report</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<configuration>
+					<destFile>${sonar.jacoco.reportPath}</destFile>
+					<append>true</append>
+				</configuration>
+				<executions>
+					<execution>
+						<id>agent</id>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-pmd-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.sonarsource.scanner.maven</groupId>
+				<artifactId>sonar-maven-plugin</artifactId>
+			</plugin>
+
+	<plugin>
+		<groupId>org.apache.maven.plugins</groupId>
+		<artifactId>maven-archetype-plugin</artifactId>
+		<version>3.1.2</version>
+	</plugin>
+			<plugin>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.20</version>
+				<configuration>
+					<skipTests>${unit-tests.skip}</skipTests>
+					<includes>
+						<include>**/*Runner.java</include>
+					</includes>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+	<profiles>
+		<profile>
+			<id>docker</id>
+			<activation>
+				<property>
+					<name>env.JENKINS_URL</name>
+				</property>
+			</activation>
+			<build>
+			</build>
+		</profile>
+	</profiles>
+</project>

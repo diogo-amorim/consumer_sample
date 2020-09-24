@@ -1,0 +1,82 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations: null
+  name: integration-preprod
+  namespace: gcd-preprod
+spec:
+  replicas: 3
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      release: integration-preprod
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 3
+  template:
+    metadata:
+      labels:
+        release: integration-preprod
+        environment: preprod
+      name: integration-preprod
+      annotations:
+        vault.security.banzaicloud.io/vault-addr: "https://vault.maersk-digital.net"
+        vault.security.banzaicloud.io/vault-skip-verify: "true"
+        vault.security.banzaicloud.io/vault-role: "gcd-preprod"
+        vault.security.banzaicloud.io/vault-path: "core-dev-west-1"
+    spec:
+      hostname: integration-preprod
+      imagePullSecrets:
+      - name: maerskao
+      containers:
+      - name: api
+        image: maerskao.azurecr.io/gcd/integration:_IMAGE_TAG_
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+          name: api-port
+        resources:
+          requests:
+            cpu: 100m
+            memory: 1024Mi
+          limits:
+            cpu: 200m
+            memory: 2048Mi   
+        env:
+        - name: PROFILE
+          value: preprod
+        - name: CONFIG_SERVER_URL
+          value: https://gcd-config-server-dev.maersk-digital.net/configserver
+        - name: k8s_server_url
+          value: vault:gcd-kv/data/kubernetes/core-dev-west-1/server#server
+        - name: mongodburi
+          value: vault:gcd-kv/data/data/readable/preprod/mongo#mongodburi
+        - name: storage.account.key
+          value: vault:gcd-kv/data/data/readable/preprod/azureblob#storage.account.key
+        - name: storage.connectionstring
+          value: vault:gcd-kv/data/data/readable/preprod/azureblob#storage.connectionstring          
+        - name: DD_AGENT_HOST
+          valueFrom:
+            fieldRef:
+              fieldPath: status.hostIP
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: integration-preprod
+  labels:
+    release: integration-preprod
+    environment: preprod
+spec:
+  type: ClusterIP
+  selector:
+    release: integration-preprod
+  ports:
+  - port: 8081
+    targetPort: 8080
+
